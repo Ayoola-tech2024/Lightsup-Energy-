@@ -8,6 +8,7 @@ import { Login } from '@/pages/admin/Login';
 import { AdminLayout } from '@/pages/admin/AdminLayout';
 import { Quotes } from '@/pages/admin/Quotes';
 import { BlogManager } from '@/pages/admin/BlogManager';
+import { TestimonialsManager } from '@/pages/admin/TestimonialsManager';
 import { Blog } from '@/pages/Blog';
 import { BlogPostView } from '@/pages/BlogPost';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -35,6 +36,7 @@ export default function App() {
             <Route path="dashboard" element={<Quotes />} />
             <Route path="quotes" element={<Quotes />} />
             <Route path="blogs" element={<BlogManager />} />
+            <Route path="testimonials" element={<TestimonialsManager />} />
           </Route>
         </Routes>
       </BrowserRouter>

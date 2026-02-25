@@ -36,6 +36,7 @@ export const AdminLayout = () => {
   const navItems = [
     { name: 'Quote Requests', href: '/admin/quotes', icon: MessageSquare },
     { name: 'Blog Posts', href: '/admin/blogs', icon: FileText },
+    { name: 'Testimonials', href: '/admin/testimonials', icon: Star },
   ];
 
   return (
