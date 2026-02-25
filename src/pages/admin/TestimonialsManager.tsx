@@ -60,94 +60,96 @@ export const TestimonialsManager = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="h-full flex flex-col min-h-0">
+      <div className="flex justify-between items-center mb-6 shrink-0">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Testimonials Management</h1>
-          <p className="text-gray-500">Approve or remove customer reviews displayed on the website.</p>
+          <p className="text-sm text-gray-500">Approve or remove customer reviews displayed on the website.</p>
         </div>
       </div>
 
-      {testimonials.length === 0 ? (
-        <div className="bg-white rounded-xl p-12 text-center border border-gray-200">
-          <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900">No testimonials found</h3>
-          <p className="text-gray-500">When customers submit reviews, they will appear here.</p>
-        </div>
-      ) : (
-        <div className="grid gap-4">
-          {testimonials.map((t) => (
-            <div 
-              key={t.id} 
-              className={`bg-white rounded-xl p-6 border transition-all ${
-                t.approved ? 'border-green-100 bg-green-50/10' : 'border-gray-200'
-              }`}
-            >
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star 
-                          key={i} 
-                          className={`h-4 w-4 ${i < t.rating ? 'text-yellow-400 fill-current' : 'text-gray-200'}`} 
-                        />
-                      ))}
-                    </div>
-                    <span className="text-xs text-gray-400">
-                      {format(t.createdAt, 'MMM d, yyyy HH:mm')}
-                    </span>
-                    {!t.approved && (
-                      <span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-                        Pending Approval
+      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide pr-2">
+        {testimonials.length === 0 ? (
+          <div className="bg-white rounded-2xl p-12 text-center border border-gray-200">
+            <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900">No testimonials found</h3>
+            <p className="text-gray-500">When customers submit reviews, they will appear here.</p>
+          </div>
+        ) : (
+          <div className="grid gap-4 pb-4">
+            {testimonials.map((t) => (
+              <div 
+                key={t.id} 
+                className={`bg-white rounded-2xl p-6 border transition-all duration-300 ${
+                  t.approved ? 'border-emerald-100 bg-emerald-50/10' : 'border-gray-200 hover:border-[var(--color-primary)]/30'
+                }`}
+              >
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star 
+                            key={i} 
+                            className={`h-4 w-4 ${i < t.rating ? 'text-yellow-400 fill-current' : 'text-gray-200'}`} 
+                          />
+                        ))}
+                      </div>
+                      <span className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">
+                        {format(t.createdAt, 'MMM d, yyyy')}
                       </span>
-                    )}
-                  </div>
-                  
-                  <p className="text-gray-700 mb-4 italic">"{t.content}"</p>
-                  
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold text-xs">
-                      {t.name.charAt(0)}
+                      {!t.approved && (
+                        <span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                          Pending
+                        </span>
+                      )}
                     </div>
-                    <div>
-                      <div className="text-sm font-bold text-gray-900">{t.name}</div>
-                      {t.role && <div className="text-xs text-gray-500">{t.role}</div>}
+                    
+                    <p className="text-gray-700 mb-6 italic leading-relaxed">"{t.content}"</p>
+                    
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 font-bold border border-gray-200">
+                        {t.name.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-gray-900">{t.name}</div>
+                        {t.role && <div className="text-xs text-gray-500">{t.role}</div>}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex md:flex-col justify-end gap-2 min-w-[140px]">
-                  <Button
-                    size="sm"
-                    variant={t.approved ? "outline" : "primary"}
-                    className="w-full gap-2"
-                    onClick={() => handleToggleStatus(t.id!, t.approved)}
-                    disabled={actionLoading === t.id}
-                  >
-                    {actionLoading === t.id ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : t.approved ? (
-                      <><X className="h-4 w-4" /> Unapprove</>
-                    ) : (
-                      <><Check className="h-4 w-4" /> Approve</>
-                    )}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="w-full gap-2 text-red-600 hover:bg-red-50 border-red-100"
-                    onClick={() => handleDelete(t.id!)}
-                    disabled={actionLoading === t.id}
-                  >
-                    <Trash2 className="h-4 w-4" /> Delete
-                  </Button>
+                  <div className="flex md:flex-col justify-end gap-2 min-w-[140px]">
+                    <Button
+                      size="sm"
+                      variant={t.approved ? "outline" : "primary"}
+                      className="w-full gap-2 rounded-xl"
+                      onClick={() => handleToggleStatus(t.id!, t.approved)}
+                      disabled={actionLoading === t.id}
+                    >
+                      {actionLoading === t.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : t.approved ? (
+                        <><X className="h-4 w-4" /> Unapprove</>
+                      ) : (
+                        <><Check className="h-4 w-4" /> Approve</>
+                      )}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full gap-2 text-red-600 hover:bg-red-50 border-red-100 rounded-xl"
+                      onClick={() => handleDelete(t.id!)}
+                      disabled={actionLoading === t.id}
+                    >
+                      <Trash2 className="h-4 w-4" /> Delete
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

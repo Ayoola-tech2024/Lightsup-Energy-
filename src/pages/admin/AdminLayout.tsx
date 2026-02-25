@@ -60,11 +60,11 @@ export const AdminLayout = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="h-screen w-full bg-gray-50 flex overflow-hidden">
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 lg:relative lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="h-full flex flex-col">
-          <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+          <div className="p-6 border-b border-gray-100 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2">
               <Logo className="h-8" />
             </div>
@@ -73,14 +73,15 @@ export const AdminLayout = () => {
             </button>
           </div>
 
-          <nav className="flex-1 p-4 space-y-1">
+          <nav className="flex-1 p-4 space-y-1 overflow-y-auto scrollbar-hide">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                onClick={() => setSidebarOpen(false)}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                   location.pathname === item.href
-                    ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]'
+                    ? 'bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
@@ -90,17 +91,17 @@ export const AdminLayout = () => {
             ))}
           </nav>
 
-          <div className="p-4 border-t border-gray-100 space-y-2">
+          <div className="p-4 border-t border-gray-100 space-y-2 shrink-0">
             <Link
               to="/"
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 w-full transition-colors"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 w-full transition-colors"
             >
               <LogOut className="h-5 w-5 rotate-180" />
               Back to Website
             </Link>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 w-full transition-colors"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 w-full transition-colors"
             >
               <LogOut className="h-5 w-5" />
               Sign Out
@@ -109,29 +110,55 @@ export const AdminLayout = () => {
         </div>
       </aside>
 
-      {/* Main Content */}
-      <div className="flex-1 lg:ml-64 flex flex-col min-h-screen">
-        <header className="bg-white border-b border-gray-200 py-4 px-6 lg:hidden flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Logo className="h-8" />
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 h-full relative">
+        <header className="bg-white border-b border-gray-200 py-4 px-6 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-600 p-1 hover:bg-gray-100 rounded-lg">
+              <Menu className="h-6 w-6" />
+            </button>
+            <div className="hidden lg:block">
+              <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                {navItems.find(item => item.href === location.pathname)?.name || 'Dashboard'}
+              </h2>
+            </div>
+            <div className="lg:hidden">
+              <Logo className="h-6" />
+            </div>
           </div>
-          <button onClick={() => setSidebarOpen(true)} className="text-gray-600">
-            <Menu className="h-6 w-6" />
-          </button>
+          
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:flex flex-col items-end">
+              <span className="text-sm font-bold text-gray-900">{user?.email?.split('@')[0]}</span>
+              <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Administrator</span>
+            </div>
+            <div className="w-10 h-10 bg-[var(--color-primary)]/10 rounded-full flex items-center justify-center text-[var(--color-primary)] font-bold border border-[var(--color-primary)]/20">
+              {user?.email?.charAt(0).toUpperCase()}
+            </div>
+          </div>
         </header>
 
-        <main className="flex-1 p-6 lg:p-8 overflow-auto">
-          <Outlet />
+        <main className="flex-1 overflow-hidden relative">
+          <div className="absolute inset-0 overflow-y-auto p-4 md:p-8 scrollbar-hide">
+            <div className="max-w-7xl mx-auto h-full">
+              <Outlet />
+            </div>
+          </div>
         </main>
       </div>
 
-      {/* Overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/20 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+      {/* Mobile Overlay */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

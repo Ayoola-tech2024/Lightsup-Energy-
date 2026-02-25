@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getBlogPosts, createBlogPost, updateBlogPost, deleteBlogPost, seedInitialBlogs, BlogPost } from '@/services/db';
 import { format } from 'date-fns';
-import { Plus, Edit2, Trash2, X, Check, Search, Database, Download, FileText } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Check, Search, Database, Download, FileText, Loader2 } from 'lucide-react';
 import { Button } from '@/components/Button';
 import { motion, AnimatePresence } from 'motion/react';
 import jsPDF from 'jspdf';
@@ -152,32 +152,32 @@ export const BlogManager = () => {
   );
 
   return (
-    <div>
-      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-8">
+    <div className="h-full flex flex-col min-h-0">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 shrink-0">
         <div>
           <h1 className="text-2xl font-bold font-display text-gray-900">Blog Posts</h1>
-          <p className="text-gray-500">Create and manage your blog content.</p>
+          <p className="text-sm text-gray-500">Create and manage your blog content.</p>
         </div>
-        <div className="flex flex-wrap gap-2 w-full xl:w-auto">
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
           {posts.length === 0 && (
-            <Button onClick={handleSeed} variant="outline" className="gap-2 flex-1 sm:flex-none justify-center">
-              <Database className="h-4 w-4" /> Seed Data
+            <Button onClick={handleSeed} variant="outline" size="sm" className="gap-2 flex-1 sm:flex-none justify-center rounded-xl">
+              <Database className="h-4 w-4" /> Seed
             </Button>
           )}
-          <Button onClick={exportCSV} variant="outline" className="gap-2 flex-1 sm:flex-none justify-center">
-            <Download className="h-4 w-4" /> <span className="hidden sm:inline">CSV</span>
+          <Button onClick={exportCSV} variant="outline" size="sm" className="gap-2 flex-1 sm:flex-none justify-center rounded-xl">
+            <Download className="h-4 w-4" /> CSV
           </Button>
-          <Button onClick={exportPDF} variant="outline" className="gap-2 flex-1 sm:flex-none justify-center">
-            <FileText className="h-4 w-4" /> <span className="hidden sm:inline">PDF</span>
+          <Button onClick={exportPDF} variant="outline" size="sm" className="gap-2 flex-1 sm:flex-none justify-center rounded-xl">
+            <FileText className="h-4 w-4" /> PDF
           </Button>
-          <Button onClick={handleCreate} className="gap-2 flex-1 sm:flex-none justify-center">
+          <Button onClick={handleCreate} size="sm" className="gap-2 flex-1 sm:flex-none justify-center rounded-xl shadow-lg shadow-[var(--color-primary)]/20">
             <Plus className="h-4 w-4" /> New Post
           </Button>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-4 border-b border-gray-200 bg-gray-50 flex gap-4">
+      <div className="flex-1 min-h-0 flex flex-col bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="p-4 border-b border-gray-200 bg-gray-50/50 flex gap-4 shrink-0">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input 
@@ -185,14 +185,14 @@ export const BlogManager = () => {
               placeholder="Search posts..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 text-sm rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent bg-white"
             />
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm min-w-[800px]">
-            <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-200">
+        <div className="flex-1 overflow-auto scrollbar-hide">
+          <table className="w-full text-left text-sm min-w-[800px] relative">
+            <thead className="bg-gray-50/80 backdrop-blur-sm text-gray-600 font-medium border-b border-gray-200 sticky top-0 z-10">
               <tr>
                 <th className="px-6 py-4">Title</th>
                 <th className="px-6 py-4">Author</th>
@@ -203,35 +203,48 @@ export const BlogManager = () => {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {loading ? (
-                <tr><td colSpan={5} className="px-6 py-8 text-center text-gray-500">Loading posts...</td></tr>
+                <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                  <div className="flex flex-col items-center gap-2">
+                    <Loader2 className="h-6 w-6 animate-spin text-[var(--color-primary)]" />
+                    <span>Loading posts...</span>
+                  </div>
+                </td></tr>
               ) : filteredPosts.length === 0 ? (
-                <tr><td colSpan={5} className="px-6 py-8 text-center text-gray-500">No posts found.</td></tr>
+                <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                  <div className="flex flex-col items-center gap-2">
+                    <Search className="h-8 w-8 text-gray-300" />
+                    <span>No posts found.</span>
+                  </div>
+                </td></tr>
               ) : (
                 filteredPosts.map((post) => (
-                  <tr key={post.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 font-medium text-gray-900">{post.title}</td>
-                    <td className="px-6 py-4 text-gray-600">{post.author}</td>
+                  <tr key={post.id} className="hover:bg-gray-50/80 transition-colors group">
+                    <td className="px-6 py-4">
+                      <div className="font-bold text-gray-900">{post.title}</div>
+                      <div className="text-xs text-gray-400 truncate max-w-xs">{post.excerpt}</div>
+                    </td>
+                    <td className="px-6 py-4 text-gray-600 font-medium">{post.author}</td>
                     <td className="px-6 py-4 text-gray-500">
                       {format(post.createdAt, 'MMM d, yyyy')}
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                        ${post.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest
+                        ${post.published ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-gray-50 text-gray-600 border border-gray-100'}`}>
                         {post.published ? 'Published' : 'Draft'}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button 
                           onClick={() => handleEdit(post)}
-                          className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                           title="Edit"
                         >
                           <Edit2 className="h-4 w-4" />
                         </button>
                         <button 
                           onClick={() => handleDelete(post.id!)}
-                          className="p-1 text-red-600 hover:bg-red-50 rounded"
+                          className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                           title="Delete"
                         >
                           <Trash2 className="h-4 w-4" />

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getQuotes, QuoteSubmission, updateQuoteStatus, deleteQuote } from '@/services/db';
 import { format } from 'date-fns';
-import { Download, Search, CheckCircle, Clock, CheckCircle2, Trash2, FileText, X } from 'lucide-react';
+import { Download, Search, CheckCircle, Clock, CheckCircle2, Trash2, FileText, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/Button';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -105,24 +105,24 @@ export const Quotes = () => {
   );
 
   return (
-    <div>
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
+    <div className="h-full flex flex-col min-h-0">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 shrink-0">
         <div>
           <h1 className="text-2xl font-bold font-display text-gray-900">Quote Requests</h1>
-          <p className="text-gray-500">Manage incoming leads and inquiries.</p>
+          <p className="text-sm text-gray-500">Manage incoming leads and inquiries.</p>
         </div>
-        <div className="flex flex-wrap gap-2 w-full lg:w-auto">
-          <Button onClick={exportCSV} variant="outline" className="gap-2 flex-1 lg:flex-none justify-center">
-            <Download className="h-4 w-4" /> <span className="hidden sm:inline">CSV</span>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <Button onClick={exportCSV} variant="outline" size="sm" className="gap-2 flex-1 sm:flex-none justify-center rounded-xl">
+            <Download className="h-4 w-4" /> CSV
           </Button>
-          <Button onClick={exportPDF} variant="outline" className="gap-2 flex-1 lg:flex-none justify-center">
-            <FileText className="h-4 w-4" /> <span className="hidden sm:inline">PDF</span>
+          <Button onClick={exportPDF} variant="outline" size="sm" className="gap-2 flex-1 sm:flex-none justify-center rounded-xl">
+            <FileText className="h-4 w-4" /> PDF
           </Button>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-4 border-b border-gray-200 bg-gray-50 flex gap-4">
+      <div className="flex-1 min-h-0 flex flex-col bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="p-4 border-b border-gray-200 bg-gray-50/50 flex gap-4 shrink-0">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input 
@@ -130,14 +130,14 @@ export const Quotes = () => {
               placeholder="Search by name, email, or phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 text-sm rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent bg-white"
             />
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm min-w-[800px]">
-            <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-200">
+        <div className="flex-1 overflow-auto scrollbar-hide">
+          <table className="w-full text-left text-sm min-w-[800px] relative">
+            <thead className="bg-gray-50/80 backdrop-blur-sm text-gray-600 font-medium border-b border-gray-200 sticky top-0 z-10">
               <tr>
                 <th className="px-6 py-4">Date</th>
                 <th className="px-6 py-4">Client</th>
@@ -149,50 +149,61 @@ export const Quotes = () => {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {loading ? (
-                <tr><td colSpan={6} className="px-6 py-8 text-center text-gray-500">Loading quotes...</td></tr>
+                <tr><td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <div className="flex flex-col items-center gap-2">
+                    <Loader2 className="h-6 w-6 animate-spin text-[var(--color-primary)]" />
+                    <span>Loading quotes...</span>
+                  </div>
+                </td></tr>
               ) : filteredQuotes.length === 0 ? (
-                <tr><td colSpan={6} className="px-6 py-8 text-center text-gray-500">No quotes found.</td></tr>
+                <tr><td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <div className="flex flex-col items-center gap-2">
+                    <Search className="h-8 w-8 text-gray-300" />
+                    <span>No quotes found matching your search.</span>
+                  </div>
+                </td></tr>
               ) : (
                 filteredQuotes.map((quote) => (
-                  <tr key={quote.id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={quote.id} className="hover:bg-gray-50/80 transition-colors group">
                     <td className="px-6 py-4 text-gray-500 whitespace-nowrap">
-                      {format(quote.createdAt, 'MMM d, yyyy')}
-                      <br />
-                      <span className="text-xs">{format(quote.createdAt, 'h:mm a')}</span>
+                      <div className="font-medium text-gray-900">{format(quote.createdAt, 'MMM d, yyyy')}</div>
+                      <div className="text-[10px] text-gray-400 uppercase tracking-tighter">{format(quote.createdAt, 'h:mm a')}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="font-medium text-gray-900">{quote.name}</div>
+                      <div className="font-bold text-gray-900">{quote.name}</div>
                       <div className="text-gray-500 text-xs">{quote.email}</div>
-                      <div className="text-gray-500 text-xs">{quote.phone}</div>
+                      <div className="text-gray-400 text-[11px]">{quote.phone}</div>
                     </td>
-                    <td className="px-6 py-4 text-gray-600 max-w-xs truncate">
-                      {quote.service}
-                      {quote.systemDetails && (
-                        <button 
-                          onClick={() => setSelectedQuote(quote)}
-                          className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800 hover:bg-purple-200 transition-colors"
-                        >
-                          View Calc
-                        </button>
-                      )}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-700 font-medium">{quote.service}</span>
+                        {quote.systemDetails && (
+                          <button 
+                            onClick={() => setSelectedQuote(quote)}
+                            className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors uppercase tracking-wider"
+                          >
+                            Calc
+                          </button>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-gray-600 max-w-xs truncate" title={quote.message}>
                       {quote.message}
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
-                        ${quote.status === 'new' ? 'bg-blue-100 text-blue-800' : 
-                          quote.status === 'contacted' ? 'bg-yellow-100 text-yellow-800' : 
-                          'bg-green-100 text-green-800'}`}>
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest
+                        ${quote.status === 'new' ? 'bg-blue-50 text-blue-700 border border-blue-100' : 
+                          quote.status === 'contacted' ? 'bg-amber-50 text-amber-700 border border-amber-100' : 
+                          'bg-emerald-50 text-emerald-700 border border-emerald-100'}`}>
                         {quote.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         {quote.status !== 'completed' && (
                           <button 
                             onClick={() => handleStatusUpdate(quote.id!, 'completed')}
-                            className="p-1 text-green-600 hover:bg-green-50 rounded"
+                            className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                             title="Mark as Completed"
                           >
                             <CheckCircle2 className="h-4 w-4" />
@@ -201,7 +212,7 @@ export const Quotes = () => {
                         {quote.status === 'new' && (
                           <button 
                             onClick={() => handleStatusUpdate(quote.id!, 'contacted')}
-                            className="p-1 text-yellow-600 hover:bg-yellow-50 rounded"
+                            className="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
                             title="Mark as Contacted"
                           >
                             <Clock className="h-4 w-4" />
@@ -209,7 +220,7 @@ export const Quotes = () => {
                         )}
                         <button 
                           onClick={() => handleDelete(quote.id!)}
-                          className="p-1 text-red-600 hover:bg-red-50 rounded"
+                          className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                           title="Delete Quote"
                         >
                           <Trash2 className="h-4 w-4" />

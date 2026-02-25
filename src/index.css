@@ -15,6 +15,16 @@
   --color-light: #f8fafc; /* Slate-50 */
 }
 
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--color-light);
