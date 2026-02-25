@@ -44,10 +44,26 @@ export const getTestimonials = async (approvedOnly = true) => {
     const snapshot = await getDocs(q);
     const testimonials = snapshot.docs.map(doc => {
       const data = doc.data();
+      let createdAt = new Date();
+      if (data.createdAt) {
+        if (typeof data.createdAt.toDate === 'function') {
+          createdAt = data.createdAt.toDate();
+        } else if (data.createdAt instanceof Date) {
+          createdAt = data.createdAt;
+        } else if (typeof data.createdAt === 'number') {
+          createdAt = new Date(data.createdAt);
+        } else if (typeof data.createdAt === 'string') {
+          createdAt = new Date(data.createdAt);
+        }
+      }
       return { 
         id: doc.id, 
-        ...data,
-        createdAt: data.createdAt?.toDate() || new Date()
+        name: data.name || 'Anonymous',
+        role: data.role || '',
+        content: data.content || '',
+        rating: data.rating || 5,
+        approved: data.approved !== false,
+        createdAt
       } as Testimonial;
     });
     
@@ -143,10 +159,28 @@ export const getQuotes = async () => {
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => {
       const data = doc.data();
+      let createdAt = new Date();
+      if (data.createdAt) {
+        if (typeof data.createdAt.toDate === 'function') {
+          createdAt = data.createdAt.toDate();
+        } else if (data.createdAt instanceof Date) {
+          createdAt = data.createdAt;
+        } else if (typeof data.createdAt === 'number') {
+          createdAt = new Date(data.createdAt);
+        } else if (typeof data.createdAt === 'string') {
+          createdAt = new Date(data.createdAt);
+        }
+      }
       return { 
         id: doc.id, 
-        ...data,
-        createdAt: data.createdAt?.toDate() || new Date()
+        name: data.name || 'Unknown',
+        phone: data.phone || '',
+        email: data.email || '',
+        service: data.service || 'General Inquiry',
+        message: data.message || '',
+        status: data.status || 'new',
+        systemDetails: data.systemDetails,
+        createdAt
       } as QuoteSubmission;
     });
   } catch (error) {
@@ -252,10 +286,27 @@ export const getBlogPosts = async (publishedOnly = true) => {
     const snapshot = await getDocs(q);
     const posts = snapshot.docs.map(doc => {
       const data = doc.data();
+      let createdAt = new Date();
+      if (data.createdAt) {
+        if (typeof data.createdAt.toDate === 'function') {
+          createdAt = data.createdAt.toDate();
+        } else if (data.createdAt instanceof Date) {
+          createdAt = data.createdAt;
+        } else if (typeof data.createdAt === 'number') {
+          createdAt = new Date(data.createdAt);
+        } else if (typeof data.createdAt === 'string') {
+          createdAt = new Date(data.createdAt);
+        }
+      }
       return { 
         id: doc.id, 
-        ...data,
-        createdAt: data.createdAt?.toDate() || new Date()
+        title: data.title || 'Untitled Post',
+        excerpt: data.excerpt || '',
+        content: data.content || '',
+        author: data.author || 'Lightsup Team',
+        imageUrl: data.imageUrl,
+        published: data.published !== false,
+        createdAt
       } as BlogPost;
     });
     

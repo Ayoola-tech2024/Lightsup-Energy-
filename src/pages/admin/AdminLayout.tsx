@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { LayoutDashboard, FileText, MessageSquare, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FileText, MessageSquare, LogOut, Menu, X, Loader2, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Logo } from '@/components/Logo';
 
@@ -42,7 +42,15 @@ export const AdminLayout = () => {
     navigate('/admin/login');
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <Loader2 className="h-12 w-12 animate-spin text-[var(--color-primary)] mb-4" />
+        <p className="text-gray-600 font-medium">Verifying Administrator Session...</p>
+        <p className="text-gray-400 text-sm mt-2">This usually takes a few seconds.</p>
+      </div>
+    );
+  }
   if (!user) return null;
 
   const navItems = [
