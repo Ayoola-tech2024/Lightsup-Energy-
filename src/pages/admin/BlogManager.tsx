@@ -27,9 +27,15 @@ export const BlogManager = () => {
   }, []);
 
   const fetchPosts = async () => {
-    const data = await getBlogPosts(false); // Get all posts, including unpublished
-    setPosts(data);
-    setLoading(false);
+    setLoading(true);
+    try {
+      const data = await getBlogPosts(false); // Get all posts, including unpublished
+      setPosts(data);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSeed = async () => {

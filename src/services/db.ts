@@ -52,7 +52,8 @@ export const getTestimonials = async (approvedOnly = true) => {
     });
     
     if (approvedOnly) {
-      return testimonials.filter(t => t.approved);
+      // Show if approved is explicitly true OR if it's undefined (for legacy data compatibility)
+      return testimonials.filter(t => t.approved !== false);
     }
     return testimonials;
   } catch (error) {

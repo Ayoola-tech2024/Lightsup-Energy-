@@ -14,7 +14,16 @@ export const AdminLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Safety timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      if (loading) {
+        setLoading(false);
+        if (!user) navigate('/admin/login');
+      }
+    }, 5000);
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      clearTimeout(timeout);
       if (!currentUser) {
         navigate('/admin/login');
       } else {
@@ -22,7 +31,10 @@ export const AdminLayout = () => {
       }
       setLoading(false);
     });
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      clearTimeout(timeout);
+    };
   }, [navigate]);
 
   const handleLogout = async () => {

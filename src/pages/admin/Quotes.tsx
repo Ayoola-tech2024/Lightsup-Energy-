@@ -18,9 +18,15 @@ export const Quotes = () => {
   }, []);
 
   const fetchQuotes = async () => {
-    const data = await getQuotes();
-    setQuotes(data);
-    setLoading(false);
+    setLoading(true);
+    try {
+      const data = await getQuotes();
+      setQuotes(data);
+    } catch (error) {
+      console.error("Error fetching quotes:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleStatusUpdate = async (id: string, status: QuoteSubmission['status']) => {
