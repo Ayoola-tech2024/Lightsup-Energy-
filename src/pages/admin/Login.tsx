@@ -3,7 +3,8 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/Button';
-import { Sun, Lock } from 'lucide-react';
+import { Logo } from '@/components/Logo';
+import { Lock } from 'lucide-react';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
@@ -16,6 +17,21 @@ export const Login = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    
+    // Demo Mode Handling
+    if (!auth) {
+      // Simulate login delay
+      setTimeout(() => {
+        // In demo mode, we can't really "login" to firebase, but we can redirect to dashboard
+        // However, AdminLayout checks for auth user. 
+        // We might need to bypass that in AdminLayout or show a message here.
+        // For now, let's show a message that Admin features are disabled in Demo Mode.
+        setError('Admin features are disabled in Demo Mode (Firebase keys missing).');
+        setLoading(false);
+      }, 1000);
+      return;
+    }
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate('/admin/dashboard');
@@ -35,8 +51,8 @@ export const Login = () => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 border border-gray-100">
         <div className="text-center mb-8">
-          <div className="bg-[var(--color-primary)] w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <Sun className="h-7 w-7 text-white" />
+          <div className="flex justify-center mb-4">
+            <Logo className="h-12" />
           </div>
           <h1 className="text-2xl font-bold font-display text-gray-900">Admin Login</h1>
           <p className="text-gray-500">Sign in to manage Lightsup Energy</p>

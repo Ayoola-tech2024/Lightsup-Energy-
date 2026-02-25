@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { Sun, LayoutDashboard, FileText, MessageSquare, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FileText, MessageSquare, LogOut, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Logo } from '@/components/Logo';
 
 export const AdminLayout = () => {
   const [user, setUser] = useState<any>(null);
@@ -13,6 +14,13 @@ export const AdminLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!auth) {
+      // Demo mode or missing config
+      setLoading(false);
+      navigate('/admin/login'); // Redirect to login where we show the "Disabled" message
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser) {
         navigate('/admin/login');
@@ -25,7 +33,9 @@ export const AdminLayout = () => {
   }, [navigate]);
 
   const handleLogout = async () => {
-    await signOut(auth);
+    if (auth) {
+      await signOut(auth);
+    }
     navigate('/admin/login');
   };
 
@@ -44,10 +54,7 @@ export const AdminLayout = () => {
         <div className="h-full flex flex-col">
           <div className="p-6 border-b border-gray-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="bg-[var(--color-primary)] p-1.5 rounded-lg">
-                <Sun className="h-5 w-5 text-white" />
-              </div>
-              <span className="font-bold font-display text-gray-900">Admin Panel</span>
+              <Logo className="h-8" />
             </div>
             <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gray-500">
               <X className="h-5 w-5" />
@@ -94,10 +101,7 @@ export const AdminLayout = () => {
       <div className="flex-1 lg:ml-64 flex flex-col min-h-screen">
         <header className="bg-white border-b border-gray-200 py-4 px-6 lg:hidden flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="bg-[var(--color-primary)] p-1.5 rounded-lg">
-              <Sun className="h-5 w-5 text-white" />
-            </div>
-            <span className="font-bold font-display text-gray-900">Admin Panel</span>
+            <Logo className="h-8" />
           </div>
           <button onClick={() => setSidebarOpen(true)} className="text-gray-600">
             <Menu className="h-6 w-6" />

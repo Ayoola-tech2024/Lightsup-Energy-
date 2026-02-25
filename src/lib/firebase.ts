@@ -1,21 +1,37 @@
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore, initializeFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { initializeApp, FirebaseApp } from "firebase/app";
+import { getAuth, Auth } from "firebase/auth";
+import { getFirestore, Firestore, initializeFirestore } from "firebase/firestore";
+import { getStorage, FirebaseStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCB6EB-zLuxM3idw7Xq2N09LTPwszarAl8",
-  authDomain: "lightsup-energy-solutions.firebaseapp.com",
-  databaseURL: "https://lightsup-energy-solutions-default-rtdb.firebaseio.com",
-  projectId: "lightsup-energy-solutions",
-  storageBucket: "lightsup-energy-solutions.firebasestorage.app",
-  messagingSenderId: "733838981788",
-  appId: "1:733838981788:web:34a7b55fdbfcc1ada74b59"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = initializeFirestore(app, {
-  experimentalForceLongPolling: true,
-});
-export const storage = getStorage(app);
+let app: FirebaseApp | undefined;
+let auth: Auth | undefined;
+let db: Firestore | undefined;
+let storage: FirebaseStorage | undefined;
+
+try {
+  // Only initialize if we have the required config to prevent crashes
+  if (firebaseConfig.apiKey && firebaseConfig.projectId) {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = initializeFirestore(app, {
+      experimentalForceLongPolling: true,
+    });
+    storage = getStorage(app);
+  } else {
+    console.warn("⚠️ Firebase environment variables missing. App running in DEMO/OFFLINE mode.");
+  }
+} catch (error) {
+  console.error("Error initializing Firebase:", error);
+}
+
+export { auth, db, storage };
