@@ -14,13 +14,6 @@ export const AdminLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!auth) {
-      // Demo mode or missing config
-      setLoading(false);
-      navigate('/admin/login'); // Redirect to login where we show the "Disabled" message
-      return;
-    }
-
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser) {
         navigate('/admin/login');
@@ -33,9 +26,7 @@ export const AdminLayout = () => {
   }, [navigate]);
 
   const handleLogout = async () => {
-    if (auth) {
-      await signOut(auth);
-    }
+    await signOut(auth);
     navigate('/admin/login');
   };
 

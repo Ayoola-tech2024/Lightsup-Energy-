@@ -18,20 +18,6 @@ export const Login = () => {
     setLoading(true);
     setError('');
     
-    // Demo Mode Handling
-    if (!auth) {
-      // Simulate login delay
-      setTimeout(() => {
-        // In demo mode, we can't really "login" to firebase, but we can redirect to dashboard
-        // However, AdminLayout checks for auth user. 
-        // We might need to bypass that in AdminLayout or show a message here.
-        // For now, let's show a message that Admin features are disabled in Demo Mode.
-        setError('Admin features are disabled in Demo Mode (Firebase keys missing).');
-        setLoading(false);
-      }, 1000);
-      return;
-    }
-
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate('/admin/dashboard');
