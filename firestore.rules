@@ -1,0 +1,35 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is logged in
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    // Testimonials: Anyone can submit, anyone can read, only admin can manage
+    match /testimonials/{testimonialId} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+
+    // Quotes: Anyone can submit, only admin can read or manage
+    match /quotes/{quoteId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Blog Posts: Anyone can read, only admin can manage
+    match /posts/{postId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Default deny for everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

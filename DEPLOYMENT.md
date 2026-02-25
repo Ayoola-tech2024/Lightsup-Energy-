@@ -1,34 +1,24 @@
 # Deployment Guide
 
-## Environment Variables
+## Firebase Configuration
+The Firebase configuration is currently hardcoded in `src/lib/firebase.ts` for convenience. No environment variables are strictly required for the app to function, but you can still use them if you prefer to hide the keys.
 
-To deploy this application to production (Vercel, Netlify, etc.), you **MUST** add the following environment variables in your hosting provider's dashboard.
+## Fixing 404 Errors on Refresh
+If you get a `404 NOT FOUND` error when refreshing pages (like `/services` or `/admin`), it is because the hosting provider (Vercel/Netlify) is looking for a physical file that doesn't exist.
 
-Go to **Settings** > **Environment Variables** and add each of these key-value pairs:
+I have added the following files to fix this:
+- `vercel.json`: Configures Vercel to redirect all traffic to `index.html`.
+- `public/_redirects`: Configures Netlify to redirect all traffic to `index.html`.
 
-| Key | Value |
-|-----|-------|
-| `VITE_FIREBASE_API_KEY` | `AIzaSyCB6EB-zLuxM3idw7Xq2N09LTPwszarAl8` |
-| `VITE_FIREBASE_AUTH_DOMAIN` | `lightsup-energy-solutions.firebaseapp.com` |
-| `VITE_FIREBASE_DATABASE_URL` | `https://lightsup-energy-solutions-default-rtdb.firebaseio.com` |
-| `VITE_FIREBASE_PROJECT_ID` | `lightsup-energy-solutions` |
-| `VITE_FIREBASE_STORAGE_BUCKET` | `lightsup-energy-solutions.firebasestorage.app` |
-| `VITE_FIREBASE_MESSAGING_SENDER_ID` | `733838981788` |
-| `VITE_FIREBASE_APP_ID` | `1:733838981788:web:34a7b55fdbfcc1ada74b59` |
-
-## Why is this needed?
-
-We moved these sensitive keys out of the code (`src/lib/firebase.ts`) and into environment variables to prevent security warnings ("Public leak"). Your app will not connect to the database without them.
+## Security Rules
+Make sure to apply the rules found in `firestore.rules` to your Firebase Console to protect your data.
 
 ## Platform Specific Instructions
 
 ### Vercel
-1. Go to your project dashboard.
-2. Click **Settings** -> **Environment Variables**.
-3. Copy-paste the keys and values from above.
-4. Redeploy your application.
+1. Ensure `vercel.json` is in your root directory.
+2. Push your changes to GitHub or redeploy via the Vercel CLI.
 
 ### Netlify
-1. Go to **Site configuration** -> **Environment variables**.
-2. Add the variables.
-3. Trigger a new deploy.
+1. Ensure `public/_redirects` exists.
+2. Trigger a new deploy.
