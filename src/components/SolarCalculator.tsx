@@ -4,6 +4,7 @@ import { Button } from '@/components/Button';
 import { Reveal } from '@/components/Reveal';
 import { Plus, Trash2, Calculator, Sun, Battery, Zap, Send, Check, Loader2, Info, X } from 'lucide-react';
 import { submitQuote } from '@/services/db';
+import { sendEmail } from '@/services/emailService';
 
 type Appliance = {
   id: string;
@@ -124,6 +125,34 @@ export const SolarCalculator = () => {
         message: `Custom System Order:\n${formState.message}\n\nAddress: ${formState.address}`,
         systemDetails
       });
+
+      // Send confirmation email
+      await sendEmail({
+        to_name: formState.name,
+        to_email: formState.email,
+        message: `
+          New Solar System Order:
+          
+          Name: ${formState.name}
+          Phone: ${formState.phone}
+          Email: ${formState.email}
+          Address: ${formState.address}
+          
+          System Details:
+          Total Load: ${results.totalLoad}W
+          Daily Energy: ${(results.dailyEnergy / 1000).toFixed(2)}kWh
+          Inverter: ${(results.inverterSize / 1000).toFixed(1)}kVA
+          Battery: ${results.batteryCapacity}Ah
+          Panels: ${results.panelCount} x 450W
+          
+          Appliances:
+          ${appliances.map(app => `- ${app.name} (${app.watts}W x ${app.quantity})`).join('\n')}
+          
+          Additional Notes:
+          ${formState.message}
+        `
+      });
+
       setSubmitStatus('success');
       setTimeout(() => {
         setIsOrderModalOpen(false);

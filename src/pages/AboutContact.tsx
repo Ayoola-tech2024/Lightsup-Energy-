@@ -4,6 +4,7 @@ import { Button } from '@/components/Button';
 import { Reveal } from '@/components/Reveal';
 import { Phone, Mail, MapPin, ChevronDown, ChevronUp, Send, Loader2, Check } from 'lucide-react';
 import { submitQuote } from '@/services/db';
+import { sendEmail } from '@/services/emailService';
 
 export const AboutContact = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -41,6 +42,24 @@ export const AboutContact = () => {
     setIsSubmitting(true);
     try {
       await submitQuote(formState);
+      
+      // Send confirmation email
+      await sendEmail({
+        to_name: formState.name,
+        to_email: formState.email,
+        message: `
+          New Quote Request:
+          
+          Name: ${formState.name}
+          Phone: ${formState.phone}
+          Email: ${formState.email}
+          Service: ${formState.service}
+          
+          Message:
+          ${formState.message}
+        `
+      });
+
       setSubmitStatus('success');
       setFormState({ name: '', phone: '', email: '', service: 'Solar Installation', message: '' });
     } catch (error) {
