@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 export const Logo = ({ className = "h-24" }: { className?: string }) => {
   const [error, setError] = useState(false);
-  const logoPath = `${import.meta.env.BASE_URL}logo.png`;
+  const logoPath = `${import.meta.env.BASE_URL}logo.jpg`;
 
   return (
     <div className={`flex items-center justify-center ${className}`}>
