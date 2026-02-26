@@ -3,6 +3,7 @@ import { EMAILJS_CONFIG } from '@/config/email';
 
 export const sendEmail = async (templateParams: Record<string, unknown>) => {
   try {
+    console.log('Sending email with params:', templateParams);
     const response = await emailjs.send(
       EMAILJS_CONFIG.SERVICE_ID,
       EMAILJS_CONFIG.TEMPLATE_ID,
@@ -12,7 +13,10 @@ export const sendEmail = async (templateParams: Record<string, unknown>) => {
     console.log('Email sent successfully:', response);
     return response;
   } catch (error) {
-    console.error('Failed to send email:', error);
+    console.error('Failed to send email. Error details:', error);
+    if (error && typeof error === 'object' && 'text' in error) {
+      console.error('EmailJS Error Text:', (error as any).text);
+    }
     throw error;
   }
 };

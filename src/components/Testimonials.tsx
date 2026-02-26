@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '@/components/Button';
 import { Reveal } from '@/components/Reveal';
-import { Star, MessageSquare, Send, Loader2, Check, User } from 'lucide-react';
+import { Star, MessageSquare, Send, Loader2, Check, User, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { submitTestimonial, getTestimonials, Testimonial } from '@/services/db';
+import { sendEmail } from '@/services/emailService';
 import { format } from 'date-fns';
 
 export const Testimonials = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const scrollRef = useRef<HTMLDivElement>(null);
   
   // Form State
   const [formState, setFormState] = useState({
@@ -36,6 +38,14 @@ export const Testimonials = () => {
     }
   };
 
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const { current } = scrollRef;
+      const scrollAmount = direction === 'left' ? -400 : 400;
+      current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -46,6 +56,23 @@ export const Testimonials = () => {
         content: formState.content,
         rating: formState.rating
       });
+
+      // Send notification email
+      await sendEmail({
+        to_name: 'Admin',
+        to_email: 'adamsromeo163@gmail.com', // Send to admin
+        message: `
+          New Testimonial Submitted:
+          
+          Name: ${formState.name}
+          Role: ${formState.role}
+          Rating: ${formState.rating}/5
+          
+          Content:
+          "${formState.content}"
+        `
+      });
+
       setSubmitStatus('success');
       setTimeout(() => {
         setIsModalOpen(false);
@@ -108,55 +135,76 @@ export const Testimonials = () => {
             <p className="text-gray-400 font-medium">No reviews yet. Be the first to share your experience!</p>
           </div>
         ) : (
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
-            {testimonials.map((testimonial, i) => (
-              <Reveal key={testimonial.id} delay={i * 0.1} direction="up">
-                <motion.div 
-                  whileHover={{ y: -8 }}
-                  className="break-inside-avoid bg-white p-8 md:p-10 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 group relative"
-                >
-                  {/* Quote Icon Accent */}
-                  <div className="absolute top-6 right-8 text-gray-100 group-hover:text-[var(--color-primary)]/10 transition-colors duration-500">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 7.55228 14.017 7V5C14.017 4.44772 14.4647 4 15.017 4H19.017C21.2261 4 23.017 5.79086 23.017 8V15C23.017 18.3137 20.3307 21 17.017 21H14.017ZM1.017 21L1.017 18C1.017 16.8954 1.91239 16 3.017 16H6.017C6.56928 16 7.017 15.5523 7.017 15V9C7.017 8.44772 6.56928 8 6.017 8H2.017C1.46472 8 1.017 7.55228 1.017 7V5C1.017 4.44772 1.46472 4 2.017 4H6.017C8.22614 4 10.017 5.79086 10.017 8V15C10.017 18.3137 7.33071 21 4.017 21H1.017Z" />
-                    </svg>
-                  </div>
-
-                  <div className="flex gap-1 mb-6">
-                    {[...Array(5)].map((_, index) => (
-                      <Star 
-                        key={index} 
-                        className={`h-4 w-4 ${index < testimonial.rating ? 'text-yellow-400 fill-current' : 'text-gray-200'}`} 
-                      />
-                    ))}
-                  </div>
-
-                  <blockquote className="relative">
-                    <p className="text-gray-700 text-lg md:text-xl leading-relaxed italic font-serif mb-8">
-                      "{testimonial.content}"
-                    </p>
-                  </blockquote>
-
-                  <div className="flex items-center gap-4 pt-6 border-t border-gray-50">
-                    <div className="relative">
-                      <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-[var(--color-primary)]/10">
-                        {testimonial.name.charAt(0)}
+          <div className="relative group">
+            <div 
+              ref={scrollRef}
+              className="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-8 scrollbar-hide px-4 md:px-0"
+            >
+              {testimonials.map((testimonial, i) => (
+                <div key={testimonial.id} className="min-w-[85vw] md:min-w-[450px] snap-center">
+                  <motion.div 
+                    whileHover={{ y: -4 }}
+                    className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col"
+                  >
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-bold text-lg shadow-inner">
+                          {testimonial.name.charAt(0)}
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-900 text-base leading-tight">{testimonial.name}</h4>
+                          {testimonial.role && (
+                            <p className="text-sm text-gray-500 mt-0.5">{testimonial.role}</p>
+                          )}
+                        </div>
                       </div>
-                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full" />
+                      <div className="flex gap-0.5 bg-yellow-50 px-2 py-1 rounded-lg border border-yellow-100">
+                        {[...Array(5)].map((_, index) => (
+                          <Star 
+                            key={index} 
+                            className={`h-4 w-4 ${index < testimonial.rating ? 'text-yellow-400 fill-current' : 'text-gray-200'}`} 
+                          />
+                        ))}
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-bold text-[var(--color-secondary)] truncate">{testimonial.name}</div>
-                      {testimonial.role && (
-                        <div className="text-xs text-gray-400 font-medium uppercase tracking-wider truncate">{testimonial.role}</div>
-                      )}
+
+                    {/* Content */}
+                    <div className="flex-grow mb-6">
+                      <p className="text-gray-600 text-base leading-relaxed italic">
+                        "{testimonial.content}"
+                      </p>
                     </div>
-                    <div className="text-[10px] text-gray-300 font-bold uppercase tracking-tighter">
-                      {format(testimonial.createdAt, 'MMM yy')}
+
+                    {/* Footer */}
+                    <div className="pt-6 border-t border-gray-50 flex items-center justify-between text-xs">
+                      <span className="text-gray-400 font-medium">{format(testimonial.createdAt, 'MMMM d, yyyy')}</span>
+                      <span className="flex items-center gap-1.5 text-green-700 font-semibold bg-green-50 px-3 py-1.5 rounded-full border border-green-100">
+                        <CheckCircle2 className="h-3.5 w-3.5" /> Verified Purchase
+                      </span>
                     </div>
-                  </div>
-                </motion.div>
-              </Reveal>
-            ))}
+                  </motion.div>
+                </div>
+              ))}
+            </div>
+            
+            {/* Navigation Buttons */}
+            <div className="hidden md:flex justify-end gap-4 mt-8 px-4">
+              <button 
+                onClick={() => scroll('left')}
+                className="p-3 rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-[var(--color-primary)] hover:text-white hover:border-[var(--color-primary)] transition-all shadow-sm"
+                aria-label="Previous review"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button 
+                onClick={() => scroll('right')}
+                className="p-3 rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-[var(--color-primary)] hover:text-white hover:border-[var(--color-primary)] transition-all shadow-sm"
+                aria-label="Next review"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -192,6 +240,17 @@ export const Testimonials = () => {
                     </div>
                     <h4 className="text-xl font-bold mb-2">Thank You!</h4>
                     <p className="text-gray-600">Your review has been submitted and is pending approval.</p>
+                  </div>
+                ) : submitStatus === 'error' ? (
+                  <div className="text-center py-8">
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <span className="text-2xl font-bold text-red-600">!</span>
+                    </div>
+                    <h4 className="text-xl font-bold mb-2">Something went wrong</h4>
+                    <p className="text-gray-600 mb-4">We couldn't submit your review. Please try again.</p>
+                    <Button onClick={() => setSubmitStatus('idle')} variant="outline">
+                      Try Again
+                    </Button>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-4">

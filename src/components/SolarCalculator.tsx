@@ -357,6 +357,17 @@ export const SolarCalculator = () => {
                   <h3 className="text-xl font-bold mb-2">Request Sent!</h3>
                   <p className="text-gray-600">We've received your system configuration. Our team will review it and contact you shortly with a formal quote.</p>
                 </div>
+              ) : submitStatus === 'error' ? (
+                <div className="p-8 text-center">
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl font-bold text-red-600">!</span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Submission Failed</h3>
+                  <p className="text-gray-600 mb-4">We couldn't send your request. Please check your connection and try again.</p>
+                  <Button onClick={() => setSubmitStatus('idle')} variant="outline">
+                    Try Again
+                  </Button>
+                </div>
               ) : (
                 <form onSubmit={handleOrderSubmit} className="p-6 space-y-4">
                   <div className="bg-blue-50 p-4 rounded-lg text-sm text-blue-800 mb-4 flex gap-2">

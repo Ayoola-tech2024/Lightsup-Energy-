@@ -257,6 +257,25 @@ export const AboutContact = () => {
                       Send Another Request
                     </Button>
                   </motion.div>
+                ) : submitStatus === 'error' ? (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-red-50 text-red-800 p-8 rounded-xl text-center"
+                  >
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <span className="text-2xl font-bold text-red-600">!</span>
+                    </div>
+                    <h4 className="text-xl font-bold mb-2">Submission Failed</h4>
+                    <p>We couldn't send your request. Please check your connection and try again.</p>
+                    <Button 
+                      className="mt-6" 
+                      variant="outline" 
+                      onClick={() => setSubmitStatus('idle')}
+                    >
+                      Try Again
+                    </Button>
+                  </motion.div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid md:grid-cols-2 gap-6">

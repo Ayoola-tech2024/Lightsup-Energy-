@@ -5,8 +5,9 @@ To ensure your emails are sent correctly, please create a new template in your E
 ## Template Settings
 
 1.  **Subject**: `New Solar Quote Request from {{to_name}}`
-2.  **To Email**: `{{to_email}}` (This sends the email to the customer)
-    *   *Note: If you want to receive a copy yourself, add your email here too, separated by a comma, or use the BCC field.*
+2.  **To Email**: YOUR_EMAIL_ADDRESS (e.g., `adamsromeo163@gmail.com`)
+    *   *This ensures YOU receive the lead notification.*
+    *   *If you want the customer to also receive a copy, add `{{to_email}}` in the BCC field.*
 3.  **From Name**: `Lightsup Energy`
 4.  **From Email**: (Your verified sender email)
 5.  **Reply To**: `{{to_email}}`

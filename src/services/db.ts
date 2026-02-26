@@ -77,29 +77,56 @@ export const getTestimonials = async (approvedOnly = true) => {
     return [
       {
         id: 'mock1',
-        name: 'Chinedu Okafor',
-        role: 'Homeowner, Lekki',
-        content: 'The installation was seamless and professional. My family now enjoys 24/7 power without the noise of a generator.',
+        name: 'Tunde Bakare',
+        role: 'Lekki Phase 1',
+        content: 'I was hesitant about the upfront cost, but the Lightsup team broke everything down clearly. We installed a 10kVA system last month. Since then, I haven\'t turned on my generator once, even with the recent grid collapse. The peace of mind is worth every naira.',
         rating: 5,
-        createdAt: new Date('2023-11-15'),
+        createdAt: new Date('2024-01-15'),
         approved: true
       },
       {
         id: 'mock2',
-        name: 'Sarah Adebayo',
-        role: 'CEO, TechStart',
-        content: 'Lightsup transformed our office energy reliability. Productivity has gone up since we switched to their solar solution.',
+        name: 'Mrs. Funmi Adeyemi',
+        role: 'Ikeja GRA',
+        content: 'Professional service from start to finish. The installers were polite and cleaned up after themselves. My freezer and ACs run perfectly on the solar. Highly recommend them if you are tired of NEPA wahala.',
         rating: 5,
-        createdAt: new Date('2023-12-02'),
+        createdAt: new Date('2024-02-03'),
         approved: true
       },
       {
         id: 'mock3',
-        name: 'Emeka Nnaji',
-        role: 'Hotel Manager',
-        content: 'Excellent after-sales support. The team is always responsive and the system performs exactly as promised.',
+        name: 'BlueWater Logistics',
+        role: 'Apapa',
+        content: 'We needed a reliable backup for our server room. Lightsup designed a custom solution that kicks in instantly when power fails. Zero downtime since installation. Great for business continuity.',
+        rating: 5,
+        createdAt: new Date('2023-11-20'),
+        approved: true
+      },
+      {
+        id: 'mock4',
+        name: 'Emmanuel Okon',
+        role: 'Surulere',
+        content: 'Good product, but what impressed me most was the after-sales support. I had a small issue with the monitoring app, and they sent a technician the next day to fix it. That kind of service is rare.',
         rating: 4,
-        createdAt: new Date('2024-01-10'),
+        createdAt: new Date('2024-01-28'),
+        approved: true
+      },
+      {
+        id: 'mock5',
+        name: 'Dr. Ibrahim Yusuf',
+        role: 'Abuja',
+        content: 'The 5kVA inverter package is solid. It powers my entire 3-bedroom flat (excluding heavy ACs) for over 12 hours at night. Finally sleeping like a baby without generator noise.',
+        rating: 5,
+        createdAt: new Date('2023-12-10'),
+        approved: true
+      },
+      {
+        id: 'mock6',
+        name: 'Chioma Egwu',
+        role: 'VGC',
+        content: 'A bit pricey compared to roadside installers, but you get what you pay for. The cabling is neat, the panels are high quality, and the warranty gives me confidence. No regrets.',
+        rating: 5,
+        createdAt: new Date('2024-02-14'),
         approved: true
       }
     ];
