@@ -39,7 +39,7 @@ export const Header = () => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between">
           <Link to="/" className="group -mt-1">
-            <Logo className="h-16" />
+            <Logo className="h-14" />
           </Link>
 
           {/* Desktop Nav */}

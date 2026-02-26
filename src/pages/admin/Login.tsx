@@ -13,6 +13,25 @@ export const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  React.useEffect(() => {
+    const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
+    const originalFavicon = favicon?.href;
+    const originalType = favicon?.type;
+    const adminFavicon = "https://plus.unsplash.com/premium_photo-1675404521313-a0fdc626f5b3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8c2VjdXJlfGVufDB8fDB8fHww";
+    
+    if (favicon) {
+      favicon.href = adminFavicon;
+      favicon.type = "image/jpeg";
+    }
+
+    return () => {
+      if (favicon && originalFavicon) {
+        favicon.href = originalFavicon;
+        favicon.type = originalType || "image/png";
+      }
+    };
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
