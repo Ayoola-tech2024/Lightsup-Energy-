@@ -122,7 +122,7 @@ export const AdminLayout = () => {
                 {navItems.find(item => item.href === location.pathname)?.name || 'Dashboard'}
               </h2>
             </div>
-            <div className="lg:hidden">
+            <div className="lg:hidden flex items-center -mt-1">
               <Logo className="h-14" />
             </div>
           </div>
