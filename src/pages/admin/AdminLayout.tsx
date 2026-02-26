@@ -14,6 +14,15 @@ export const AdminLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Favicon change for admin pages
+    const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
+    const originalFavicon = favicon?.href;
+    const adminFavicon = "https://plus.unsplash.com/premium_photo-1675404521313-a0fdc626f5b3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8c2VjdXJlfGVufDB8fDB8fHww";
+    
+    if (favicon) {
+      favicon.href = adminFavicon;
+    }
+
     // Safety timeout to prevent infinite loading
     const timeout = setTimeout(() => {
       if (loading) {
@@ -34,6 +43,9 @@ export const AdminLayout = () => {
     return () => {
       unsubscribe();
       clearTimeout(timeout);
+      if (favicon && originalFavicon) {
+        favicon.href = originalFavicon;
+      }
     };
   }, [navigate]);
 
@@ -66,7 +78,7 @@ export const AdminLayout = () => {
         <div className="h-full flex flex-col">
           <div className="p-6 border-b border-gray-100 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2">
-              <Logo className="h-8" />
+              <Logo className="h-16" />
             </div>
             <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gray-500">
               <X className="h-5 w-5" />
@@ -123,7 +135,7 @@ export const AdminLayout = () => {
               </h2>
             </div>
             <div className="lg:hidden">
-              <Logo className="h-6" />
+              <Logo className="h-14" />
             </div>
           </div>
           

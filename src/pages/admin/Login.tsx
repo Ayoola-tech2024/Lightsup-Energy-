@@ -38,7 +38,7 @@ export const Login = () => {
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 border border-gray-100">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <Logo className="h-12" />
+            <Logo className="h-40" />
           </div>
           <h1 className="text-2xl font-bold font-display text-gray-900">Admin Login</h1>
           <p className="text-gray-500">Sign in to manage Lightsup Energy</p>

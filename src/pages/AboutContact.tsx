@@ -179,7 +179,7 @@ export const AboutContact = () => {
               <div className="space-y-8">
                 {[
                   { icon: MapPin, title: 'Visit Us', content: '123 Adetokunbo Ademola Street, Victoria Island, Lagos' },
-                  { icon: Phone, title: 'Call Us', content: '+234 800 123 4567' },
+                  { icon: Phone, title: 'Call Us', content: '07036791927' },
                   { icon: Mail, title: 'Email Us', content: 'hello@lightsupenergy.com' },
                 ].map((item, i) => (
                   <Reveal key={i} delay={0.3 + (i * 0.1)}>

@@ -323,7 +323,7 @@ export const Home = () => {
                 Request a Quote
               </Button>
               <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-[var(--color-primary)]">
-                Call: +234 800 123 4567
+                Call: 07036791927
               </Button>
             </div>
           </Reveal>

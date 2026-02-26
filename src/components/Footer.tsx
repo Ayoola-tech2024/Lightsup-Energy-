@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react';
+import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin, Youtube } from 'lucide-react';
 import { Logo } from './Logo';
 
 export const Footer = () => {
@@ -27,7 +27,7 @@ export const Footer = () => {
           {/* Brand */}
           <div>
             <Link to="/" className="block mb-6">
-              <Logo className="h-10" />
+              <Logo className="h-36" />
             </Link>
             <p className="text-gray-300 text-sm leading-relaxed mb-6">
               Empowering Nigeria with reliable, sustainable, and cost-effective solar energy solutions for homes and businesses.
@@ -59,6 +59,15 @@ export const Footer = () => {
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-4 w-4 text-white" />
+              </a>
+              <a
+                href="https://www.youtube.com/@lightsupenergy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white/10 p-2 rounded-full hover:bg-[var(--color-primary)] transition-colors"
+                aria-label="YouTube"
+              >
+                <Youtube className="h-4 w-4 text-white" />
               </a>
             </div>
           </div>
@@ -117,7 +126,7 @@ export const Footer = () => {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-[var(--color-primary)] shrink-0" />
-                <span className="text-gray-400 text-sm">+234 800 123 4567</span>
+                <span className="text-gray-400 text-sm">07036791927</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-[var(--color-primary)] shrink-0" />
