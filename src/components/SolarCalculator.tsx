@@ -232,7 +232,7 @@ export const SolarCalculator = () => {
                   key={app.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="grid grid-cols-12 gap-4 items-center bg-gray-50 p-4 rounded-xl border border-gray-100"
+                  className="grid grid-cols-12 gap-4 items-center bg-gray-50 p-4 rounded-xl border border-gray-100 group"
                 >
                   <div className="col-span-12 sm:col-span-4">
                     <label className="text-xs text-gray-500 mb-1 block sm:hidden">Appliance Name</label>
@@ -278,7 +278,7 @@ export const SolarCalculator = () => {
                   <div className="col-span-1 flex justify-end">
                     <button 
                       onClick={() => removeAppliance(app.id)}
-                      className="text-red-400 hover:text-red-600 p-1"
+                      className="text-red-400 hover:text-red-600 p-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>

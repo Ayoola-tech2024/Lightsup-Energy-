@@ -29,7 +29,7 @@ export const submitTestimonial = async (data: Omit<Testimonial, 'id' | 'createdA
     await addDoc(collection(db, "testimonials"), {
       ...data,
       createdAt: Timestamp.now(),
-      approved: true // Set to true by default for immediate feedback, can be managed in admin
+      approved: false // Set to false by default so admin must approve
     });
   } catch (error) {
     console.warn("Firebase unreachable, simulating testimonial submission success:", error);

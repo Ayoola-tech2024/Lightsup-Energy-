@@ -199,7 +199,7 @@ export const Quotes = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex justify-end gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                         {quote.status !== 'completed' && (
                           <button 
                             onClick={() => handleStatusUpdate(quote.id!, 'completed')}
