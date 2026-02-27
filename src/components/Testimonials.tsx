@@ -57,21 +57,27 @@ export const Testimonials = () => {
         rating: formState.rating
       });
 
-      // Send notification email
-      await sendEmail({
-        to_name: 'Admin',
-        to_email: 'adamsromeo163@gmail.com', // Send to admin
-        message: `
-          New Testimonial Submitted:
-          
-          Name: ${formState.name}
-          Role: ${formState.role}
-          Rating: ${formState.rating}/5
-          
-          Content:
-          "${formState.content}"
-        `
-      });
+      // Send notification email - wrapped in try/catch so database success still shows
+      try {
+        await sendEmail({
+          to_email: 'adamsromeo163@gmail.com', // Send to admin
+          from_name: formState.name,
+          from_role: formState.role,
+          rating: formState.rating,
+          message: `
+            New Testimonial Submitted:
+            
+            Name: ${formState.name}
+            Role: ${formState.role}
+            Rating: ${formState.rating}/5
+            
+            Content:
+            "${formState.content}"
+          `
+        });
+      } catch (emailError) {
+        console.error('Email notification failed but database submission succeeded:', emailError);
+      }
 
       setSubmitStatus('success');
       setTimeout(() => {

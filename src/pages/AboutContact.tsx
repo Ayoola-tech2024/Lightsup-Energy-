@@ -43,22 +43,29 @@ export const AboutContact = () => {
     try {
       await submitQuote(formState);
       
-      // Send confirmation email
-      await sendEmail({
-        to_name: formState.name,
-        to_email: formState.email,
-        message: `
-          New Quote Request:
-          
-          Name: ${formState.name}
-          Phone: ${formState.phone}
-          Email: ${formState.email}
-          Service: ${formState.service}
-          
-          Message:
-          ${formState.message}
-        `
-      });
+      // Send confirmation email - wrapped in try/catch so database success still shows
+      try {
+        await sendEmail({
+          to_email: 'adamsromeo163@gmail.com', // Always send to admin
+          from_name: formState.name,
+          from_email: formState.email,
+          from_phone: formState.phone,
+          service_type: formState.service,
+          message: `
+            New Quote Request:
+            
+            Name: ${formState.name}
+            Phone: ${formState.phone}
+            Email: ${formState.email}
+            Service: ${formState.service}
+            
+            Message:
+            ${formState.message}
+          `
+        });
+      } catch (emailError) {
+        console.error('Email notification failed but database submission succeeded:', emailError);
+      }
 
       setSubmitStatus('success');
       setFormState({ name: '', phone: '', email: '', service: 'Solar Installation', message: '' });

@@ -58,6 +58,8 @@ export const SolarCalculator = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
+  const [isAddDropdownOpen, setIsAddDropdownOpen] = useState(false);
+
   useEffect(() => {
     calculateSystem();
   }, [appliances]);
@@ -126,32 +128,38 @@ export const SolarCalculator = () => {
         systemDetails
       });
 
-      // Send confirmation email
-      await sendEmail({
-        to_name: formState.name,
-        to_email: formState.email,
-        message: `
-          New Solar System Order:
-          
-          Name: ${formState.name}
-          Phone: ${formState.phone}
-          Email: ${formState.email}
-          Address: ${formState.address}
-          
-          System Details:
-          Total Load: ${results.totalLoad}W
-          Daily Energy: ${(results.dailyEnergy / 1000).toFixed(2)}kWh
-          Inverter: ${(results.inverterSize / 1000).toFixed(1)}kVA
-          Battery: ${results.batteryCapacity}Ah
-          Panels: ${results.panelCount} x 450W
-          
-          Appliances:
-          ${appliances.map(app => `- ${app.name} (${app.watts}W x ${app.quantity})`).join('\n')}
-          
-          Additional Notes:
-          ${formState.message}
-        `
-      });
+      // Send confirmation email - wrapped in try/catch so database success still shows
+      try {
+        await sendEmail({
+          to_email: 'adamsromeo163@gmail.com', // Always send to admin
+          from_name: formState.name,
+          from_email: formState.email,
+          from_phone: formState.phone,
+          message: `
+            New Solar System Order:
+            
+            Name: ${formState.name}
+            Phone: ${formState.phone}
+            Email: ${formState.email}
+            Address: ${formState.address}
+            
+            System Details:
+            Total Load: ${results.totalLoad}W
+            Daily Energy: ${(results.dailyEnergy / 1000).toFixed(2)}kWh
+            Inverter: ${(results.inverterSize / 1000).toFixed(1)}kVA
+            Battery: ${results.batteryCapacity}Ah
+            Panels: ${results.panelCount} x 450W
+            
+            Appliances:
+            ${appliances.map(app => `- ${app.name} (${app.watts}W x ${app.quantity})`).join('\n')}
+            
+            Additional Notes:
+            ${formState.message}
+          `
+        });
+      } catch (emailError) {
+        console.error('Email notification failed but database submission succeeded:', emailError);
+      }
 
       setSubmitStatus('success');
       setTimeout(() => {
@@ -177,21 +185,44 @@ export const SolarCalculator = () => {
               <h2 className="text-xl font-bold font-display text-gray-800 flex items-center gap-2">
                 <Zap className="h-5 w-5 text-[var(--color-primary)]" /> Your Appliances
               </h2>
-              <div className="relative group">
-                <Button size="sm" variant="outline" className="gap-2">
+              <div className="relative">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="gap-2"
+                  onClick={() => setIsAddDropdownOpen(!isAddDropdownOpen)}
+                >
                   <Plus className="h-4 w-4" /> Add Appliance
                 </Button>
-                <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 p-2 hidden group-hover:block z-10 max-h-80 overflow-y-auto">
-                  {commonAppliances.map((app, i) => (
-                    <button
-                      key={i}
-                      onClick={() => addAppliance(app)}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-50 rounded-lg text-sm text-gray-700 flex justify-between items-center"
-                    >
-                      {app.name} <span className="text-gray-400 text-xs">{app.watts}W</span>
-                    </button>
-                  ))}
-                </div>
+                <AnimatePresence>
+                  {isAddDropdownOpen && (
+                    <>
+                      <div 
+                        className="fixed inset-0 z-10" 
+                        onClick={() => setIsAddDropdownOpen(false)} 
+                      />
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 p-2 z-20 max-h-80 overflow-y-auto"
+                      >
+                        {commonAppliances.map((app, i) => (
+                          <button
+                            key={i}
+                            onClick={() => {
+                              addAppliance(app);
+                              setIsAddDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-4 py-2 hover:bg-gray-50 rounded-lg text-sm text-gray-700 flex justify-between items-center"
+                          >
+                            {app.name} <span className="text-gray-400 text-xs">{app.watts}W</span>
+                          </button>
+                        ))}
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 
@@ -209,7 +240,7 @@ export const SolarCalculator = () => {
                       type="text"
                       value={app.name}
                       onChange={(e) => updateAppliance(app.id, 'name', e.target.value)}
-                      className="w-full bg-transparent border-none focus:ring-0 font-medium text-gray-900 p-0"
+                      className="w-full bg-transparent border-none focus:ring-0 font-medium text-gray-900 p-2 sm:p-0"
                       placeholder="Appliance Name"
                     />
                   </div>
