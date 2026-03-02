@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { LayoutDashboard, FileText, MessageSquare, LogOut, Menu, X, Loader2, Star } from 'lucide-react';
+import { LayoutDashboard, FileText, MessageSquare, LogOut, Menu, X, Loader2, Star, Briefcase } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Logo } from '@/components/Logo';
 
@@ -56,6 +56,7 @@ export const AdminLayout = () => {
   const navItems = [
     { name: 'Quote Requests', href: '/admin/quotes', icon: MessageSquare },
     { name: 'Blog Posts', href: '/admin/blogs', icon: FileText },
+    { name: 'Projects', href: '/admin/projects', icon: Briefcase },
     { name: 'Testimonials', href: '/admin/testimonials', icon: Star },
   ];
 

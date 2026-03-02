@@ -165,6 +165,19 @@ export interface BlogPost {
   published: boolean;
 }
 
+export interface Project {
+  id?: string;
+  title: string;
+  description: string;
+  location: string;
+  capacity: string;
+  clientType: 'Residential' | 'Commercial' | 'Industrial';
+  completionDate: Date;
+  mainImage: string;
+  gallery: string[];
+  createdAt: Date;
+}
+
 // Quotes Service
 export const submitQuote = async (data: Omit<QuoteSubmission, 'id' | 'createdAt' | 'status'>) => {
   try {
@@ -393,5 +406,103 @@ export const deleteBlogPost = async (id: string) => {
     await deleteDoc(doc(db, "posts", id));
   } catch (error) {
     console.warn("Firebase unreachable, simulating blog post deletion:", error);
+  }
+};
+
+// Project Service
+export const createProject = async (data: Omit<Project, 'id' | 'createdAt'>) => {
+  try {
+    const docRef = await addDoc(collection(db, "projects"), {
+      ...data,
+      completionDate: Timestamp.fromDate(data.completionDate),
+      createdAt: Timestamp.now()
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error creating project:", error);
+    throw error;
+  }
+};
+
+export const getProjects = async () => {
+  try {
+    const q = query(collection(db, "projects"), orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => {
+      const data = doc.data();
+      let createdAt = new Date();
+      if (data.createdAt) {
+        if (typeof data.createdAt.toDate === 'function') {
+          createdAt = data.createdAt.toDate();
+        } else if (data.createdAt instanceof Date) {
+          createdAt = data.createdAt;
+        } else if (typeof data.createdAt === 'number') {
+          createdAt = new Date(data.createdAt);
+        }
+      }
+      
+      let completionDate = new Date();
+      if (data.completionDate) {
+        if (typeof data.completionDate.toDate === 'function') {
+          completionDate = data.completionDate.toDate();
+        } else if (data.completionDate instanceof Date) {
+          completionDate = data.completionDate;
+        } else if (typeof data.completionDate === 'number') {
+          completionDate = new Date(data.completionDate);
+        }
+      }
+
+      return { 
+        id: doc.id, 
+        title: data.title || '',
+        description: data.description || '',
+        location: data.location || '',
+        capacity: data.capacity || '',
+        clientType: data.clientType || 'Residential',
+        completionDate,
+        mainImage: data.mainImage || '',
+        gallery: data.gallery || [],
+        createdAt
+      } as Project;
+    });
+  } catch (error) {
+    console.warn("Firebase unreachable, returning mock projects:", error);
+    return [
+      {
+        id: 'mock-1',
+        title: 'Lekki Phase 1 Luxury Villa',
+        description: 'A complete off-grid solution for a 5-bedroom luxury villa, ensuring 24/7 power supply independent of the grid.',
+        location: 'Lekki, Lagos',
+        capacity: '10kW',
+        clientType: 'Residential',
+        completionDate: new Date('2024-01-01'),
+        mainImage: 'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?q=80&w=800&auto=format&fit=crop',
+        gallery: [],
+        createdAt: new Date()
+      }
+    ] as Project[];
+  }
+};
+
+export const updateProject = async (id: string, data: Partial<Project>) => {
+  try {
+    const projectRef = doc(db, "projects", id);
+    const updateData = { ...data };
+    if (data.completionDate) {
+      updateData.completionDate = Timestamp.fromDate(data.completionDate) as any;
+    }
+    await updateDoc(projectRef, updateData);
+  } catch (error) {
+    console.error("Error updating project:", error);
+    throw error;
+  }
+};
+
+export const deleteProject = async (id: string) => {
+  try {
+    await deleteDoc(doc(db, "projects", id));
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    throw error;
   }
 };
